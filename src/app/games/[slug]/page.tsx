@@ -1,17 +1,15 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllPosts, getGameBySlug, getPageBySlug, getPostBySlug } from "@/lib/api";
+import { getGameBySlug } from "@/lib/api";
 import { CMS_NAME } from "@/lib/constants";
 import markdownToHtml from "@/lib/markdownToHtml";
 import Alert from "@/app/_components/alert";
 import Container from "@/app/_components/container";
 import Header from "@/app/_components/header";
-import { PostBody } from "@/app/_components/post-body";
-import { PostHeader } from "@/app/_components/post-header";
-import { PostTitle } from "@/app/_components/post-title";
 
-export default async function Post({ params }: Params) {
-  const post = getGameBySlug(params.slug);
+export default async function Game() {
+  // const post = getGameBySlug(params.slug);
+  const post = getGameBySlug("popstar");
 
   if (!post) {
     return notFound();
@@ -42,8 +40,9 @@ type Params = {
   };
 };
 
-export function generateMetadata({ params }: Params): Metadata {
-  const post = getGameBySlug(params.slug);
+export function generateMetadata(): Metadata {
+  // const post = getGameBySlug(params.slug);
+  const post = getGameBySlug("popstar");
 
   if (!post) {
     return notFound();

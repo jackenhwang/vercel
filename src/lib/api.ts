@@ -5,6 +5,7 @@ import { join } from "path";
 
 const postsDirectory = join(process.cwd(), "_posts");
 const pagesDirectory = join(process.cwd(), "_pages");
+const gamesDirectory = join(process.cwd(), "_games");
 
 export function getPostSlugs() {
   return fs.readdirSync(postsDirectory);
@@ -39,7 +40,7 @@ export function getPageBySlug(slug: string) {
 
 export function getGameBySlug(slug: string) {
   const realSlug = slug.replace(/\.md$/, "");
-  const fullPath = join(pagesDirectory, `${realSlug}.md`);
+  const fullPath = join(gamesDirectory, `${realSlug}.md`);
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 

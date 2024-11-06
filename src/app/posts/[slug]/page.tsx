@@ -9,8 +9,10 @@ import { PostBody } from "@/app/_components/post-body";
 import { PostHeader } from "@/app/_components/post-header";
 import { GamePlay } from "@/app/_components/game-play";
 
-export default async function Post({ params }: Params) {
-  const post = getPostBySlug(params.slug);
+type Params = Promise<{ slug: string }>
+export default async function Post({ params }: { params: Params }) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
 
   const posts = getAllPosts();
   let posts1 = posts.slice(0);
@@ -51,14 +53,15 @@ export default async function Post({ params }: Params) {
   // );
 }
 
-type Params = {
-  params: {
-    slug: string;
-  };
-};
+// type Params = {
+//   params: {
+//     slug: string;
+//   };
+// };
 
-export function generateMetadata({ params }: Params): Metadata {
-  const post = getPostBySlug(params.slug);
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
 
   if (!post) {
     return notFound();
