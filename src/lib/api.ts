@@ -1,11 +1,10 @@
-import { Post } from "@/interfaces/post";
+import { GameInfo, Post } from "@/interfaces/post";
 import fs from "fs";
 import matter from "gray-matter";
 import { join } from "path";
+import { g_game_data } from "./gamedata";
 
 const postsDirectory = join(process.cwd(), "_posts");
-const pagesDirectory = join(process.cwd(), "_pages");
-const gamesDirectory = join(process.cwd(), "_games");
 
 export function getPostSlugs() {
   return fs.readdirSync(postsDirectory);
@@ -29,20 +28,11 @@ export function getAllPosts(): Post[] {
   return posts;
 }
 
-export function getPageBySlug(slug: string) {
-  const realSlug = slug.replace(/\.md$/, "");
-  const fullPath = join(pagesDirectory, `${realSlug}.md`);
-  const fileContents = fs.readFileSync(fullPath, "utf8");
-  const { data, content } = matter(fileContents);
-
-  return { ...data, slug: realSlug, content } as Post;
+export function getAllGames(): GameInfo[] {
+  return g_game_data;
 }
 
 export function getGameBySlug(slug: string) {
-  const realSlug = slug.replace(/\.md$/, "");
-  const fullPath = join(gamesDirectory, `${realSlug}.md`);
-  const fileContents = fs.readFileSync(fullPath, "utf8");
-  const { data, content } = matter(fileContents);
-
-  return { ...data, slug: realSlug, content } as Post;
+  let found = g_game_data.find((e, i, arr)=>e.slug == slug);
+  return found;
 }

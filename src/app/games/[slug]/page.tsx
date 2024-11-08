@@ -1,68 +1,84 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getGameBySlug } from "@/lib/api";
+import { getAllGames, getAllPosts, getGameBySlug, getPostBySlug } from "@/lib/api";
 import { CMS_NAME } from "@/lib/constants";
-import markdownToHtml from "@/lib/markdownToHtml";
 import Alert from "@/app/_components/alert";
 import Container from "@/app/_components/container";
 import Header from "@/app/_components/header";
+import { PostBody } from "@/app/_components/post-body";
+import { PostHeader } from "@/app/_components/post-header";
+import { GamePlayer } from "@/app/_components/game-player";
+import { GameListItem0 } from "@/app/_components/game-list-item-0";
+import classNames from "classnames";
+import { GameListItem } from "@/app/_components/game-list-item";
 
-export default async function Game() {
-  // const post = getGameBySlug(params.slug);
-  const post = getGameBySlug("popstar");
+type Params = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+export default async function Game(props: Params) {
+  const params = await props.params;
+  const gameInfo = getGameBySlug(params.slug);
 
-  if (!post) {
+  const games = getAllGames();
+
+  if (!gameInfo) {
     return notFound();
   }
-
-  const content = await markdownToHtml(post.content || "");
 
   return (
     <main>
-        <Alert preview={post.preview} />
-        <Container>
-            <Header/>
-        </Container>
-        <div className="flex-container mx-1">
-            <article className={`main`}>
-                <p>菜鸟教程 - 学的不仅是技术，更是梦想！菜鸟教程(www.runoob.com)提供了最全的编程技术基础教程, 介绍了HTML、CSS、Javascript、Python，Java，Ruby，C，PHP , MySQL等各种编程语言的基础知识。 同时本站中也提供了大量的在线实例，通过实例，您可以更好的学习编程。</p>
-            </article>
-            <aside className="aside aside1">边栏 1</aside>
-            <aside className="aside aside2">边栏 2</aside>
-        </div>
+      <Container>
+        <section>
+          <ul className="mb-32 game-grid game-grid-cols">
+            <li className="contents">
+              <GameListItem0 />
+            </li>
+          {games.map((e, index, arr) => (
+            gameInfo.slug == e.slug ? (
+            <li className='game-player-area' style={{/*gridArea:playerState?.gridArea*/}}>
+              <div className="bg-orange-300 w-full h-full min-h-96">
+                <GamePlayer gameInfo={gameInfo}/>
+              </div>
+            </li>
+          ) : (
+            <li className='game-grid-item'>
+              <GameListItem key={e.slug} gameInfo={e} /> 
+            </li>
+          )
+          ))}
+          </ul>
+        </section>
+      </Container>
     </main>
   );
+
 }
 
-type Params = {
-  params: {
-    slug: string;
-  };
-};
+export async function generateMetadata(props: Params): Promise<Metadata> {
+  const params = await props.params;
+  const game = getGameBySlug(params.slug);
 
-export function generateMetadata(): Metadata {
-  // const post = getGameBySlug(params.slug);
-  const post = getGameBySlug("popstar");
-
-  if (!post) {
+  if (!game) {
     return notFound();
   }
 
-  const title = `${post.title} | Next.js Blog Example with ${CMS_NAME}`;
+  const title = `${game.title} | Next.js Blog Example with ${CMS_NAME}`;
 
   return {
     title,
     openGraph: {
       title,
-      images: [post.ogImage.url],
+      images: [game.thumb_1],
     },
   };
 }
 
-// export async function generateStaticParams() {
-  // const posts = getAllPosts();
+export async function generateStaticParams() {
+  const games = getAllGames();
 
-  // return posts.map((post) => ({
-  //   slug: post.slug,
-  // }));
-// }
+  return games.map((e) => ({
+    slug: e.slug,
+  }));
+}

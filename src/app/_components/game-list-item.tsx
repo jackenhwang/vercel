@@ -6,35 +6,22 @@ import CoverImage from "./cover-image";
 import DateFormatter from "./date-formatter";
 import Image from "next/image";
 import cn from "classnames";
+import { GameInfo } from "@/interfaces/post";
 
 type Props = {
-  title: string;
-  coverImage: string;
-  date: string;
-  excerpt: string;
-  author: Author;
-  slug: string;
-  stars:number;
+  gameInfo: GameInfo;
 };
 
-export function GameListItem({
-  title,
-  coverImage,
-  date,
-  excerpt,
-  author,
-  slug,
-  stars,
-}: Props) {
+export function GameListItem({gameInfo}: Props) {
   return (
-    <Link href={`/posts/${slug}`} className="hover:underline games_list_a">
+    <Link href={`/games/${gameInfo.slug}`} className="hover:underline game-grid-item-a">
     <div className="thumb">
-      <Image src={coverImage} alt={`Cover Image for ${title}`} className={cn("shadow-sm w-full", { "hover:shadow-lg transition-shadow duration-200": slug, })} width={300} height={300} /> 
+      <Image src={gameInfo.thumb_1} alt={`Cover Image for ${gameInfo.title}`} className={cn("shadow-sm w-full", { "hover:shadow-lg transition-shadow duration-200": gameInfo.slug, })} width={300} height={300} /> 
     </div>
     <div className="list-info">
-      <div className="list-title">{title}</div>
+      <div className="list-title">{gameInfo.title}</div>
     </div>
-    <div className={cn("none", (stars > 3)?'gameicon':'')}></div>
+    <div className={cn("none", (gameInfo.upvote > 3)?'gameicon':'')}></div>
   </Link>
 
     // <div>
